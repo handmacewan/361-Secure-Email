@@ -1,0 +1,44 @@
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+
+key = RSA.generate(2048)
+
+# Save the private key for the client
+with open("client_private.pem", "wb") as private_file:
+    private_file.write(key.export_key())
+
+# Save the public key for the server
+with open("server_public.pem", "wb") as public_file:
+    public_file.write(key.publickey().export_key())
+
+
+def encrypt_message(message, public__server_key_file):
+    with open(public__server_key_file, "rb") as key_file:
+        server_public_key = RSA.import_key(key_file.read())
+        cipher = PKCS1_OAEP.new(server_public_key)
+    return cipher.encrypt(message.encode())
+
+# Decrypts the message using the private key of the client
+def decrypt_message(encrypted_message, private_client_key_file):
+    with open(private_client_key_file, "rb") as key_file:
+        client_private_key = RSA.import_key(key_file.read())
+    cipher = PKCS1_OAEP.new(client_private_key)
+    return cipher.decrypt(encrypted_message).decode()
+
+
+# Test the encryption and decryption
+def test_encryption_decryption():
+    # Original message
+    message = input("Enter a message to encrypt: ")
+    print("Original message:", message)
+    
+    # Encrypt the message using the server's public key
+    encrypted_message = encrypt_message(message, "C:/Users/Rushi/361_final_project/client/client1/server_public.pem")
+    print("Encrypted message:", encrypted_message)
+
+    # Decrypt the message using the client's private key
+    decrypted_message = decrypt_message(encrypted_message, "C:/Users/Rushi/361_final_project/server/server_private.pem")
+    print("Decrypted message:", decrypted_message)
+
+# Call the test function
+test_encryption_decryption()

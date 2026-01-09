@@ -1,0 +1,7 @@
+From: client1
+To: client2
+Time and Date: 2025-03-30 11:41:59.320477
+Title: asdada
+Content Length: 27
+Content: 
+this is a new typed message
